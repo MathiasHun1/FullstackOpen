@@ -18,9 +18,7 @@ const App = () => {
       <Button handleClick={addGood} text={'good'} />
       <Button handleClick={addNeutral} text={'neutral'} />
       <Button handleClick={addBad} text={'bad'} />
-      
       <h1>statistics</h1>
-
       <Statistics all={all} good={good} neutral={neutral} bad={bad} />
     </>
   )
@@ -36,7 +34,14 @@ const Button = ({ handleClick, text }) => {
 ///StatistiscLine Component
 const StatisticsLine = ({ text, value }) => {
   return (
-    <p>{text}: {value}</p>
+    <>
+      <td>
+        {text}
+      </td>
+      <td>
+        {value}
+      </td>
+    </>
   )
 }
 
@@ -57,14 +62,26 @@ const Statistics = ({ all, good, bad, neutral }) => {
   }
 
   return (
-    <>
-      <StatisticsLine text='good' value={good}/>
-      <StatisticsLine text='neutral' value={neutral}/>
-      <StatisticsLine text='bad' value={bad}/>
-      <StatisticsLine text='all' value={all}/>
-      <StatisticsLine text='average' value={calcAverage()}/>
-      <StatisticsLine text='positive' value={calcPositive()}/>
-    </>
+    <table>
+      <tr>
+        <StatisticsLine text='good' value={good}/>
+      </tr>
+      <tr>
+        <StatisticsLine text='neutral' value={neutral}/>
+      </tr>
+      <tr>
+        <StatisticsLine text='bad' value={bad}/>
+      </tr>
+      <tr>
+        <StatisticsLine text='all' value={all}/>
+      </tr>
+      <tr>
+        <StatisticsLine text='average' value={calcAverage()}/>
+      </tr>
+      <tr>
+        <StatisticsLine text='positive' value={calcPositive()}/>
+      </tr>
+    </table>
   )
 }
 
