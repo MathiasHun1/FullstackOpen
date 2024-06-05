@@ -1,37 +1,68 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Form from './components/Form'
 import List from './components/List'
 import FilterField from './components/FilterField'
 import _ from 'lodash'
+import services from './services/people'
+import axios from 'axios'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ])
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterText, setFilterText] = useState('')
 
+  const baseUrl = 'http://localhost:3001/peoples'
+
+  useEffect(() => {
+    services
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
+      })
+  }, [])
+
   const handleSubmit = (e) => {
     e.preventDefault()
-
+  // Alert if not every field is filled 
     if(newName === '' || newNumber === '') {
       alert('Please fill every field')
       return
     }
-
+  //Check if the person is already on the list
     if (persons.some((person) => 
-      _.isEqual(person, {name: newName.trim(), number: newNumber.trim()}))) {
+      person.name.trim() === newName.trim() && person.number.trim() === newNumber.trim())) {
       alert(`${newName.trim()} is already on the list!`)
-    } else {
-      setPersons(persons.concat({name: newName, number: newNumber}))
-      setNewName('')
-      setNewNumber('')
+      } else if(persons.some((person) => 
+        person.name.trim() === newName.trim() && person.number.trim() !== newNumber.trim())) {
+          if(window.confirm(`${newName.trim()} is already in the phonebook, do you want to update the number?`)) {
+            const personToUpdate = persons.find(person => person.name.trim() === newName.trim())
+            const updatedPerson = {...personToUpdate, number: newNumber}
+            console.log(updatedPerson.id)
+            services
+              .update(updatedPerson.id, updatedPerson)
+              .then(returnesPerson => setPersons(persons.map(person => person.id !== updatedPerson.id ? person : returnesPerson)) )
+
+          }
+      } else {
+        const createdPerson = {name: newName, number: newNumber}
+        services
+          .create(createdPerson)
+          .then(newPerson => setPersons(persons.concat(newPerson)))
+        setNewName('')
+        setNewNumber('')
     }
   }
+  // Delete person
+  const handleDelete = (id) => {
+    const personToDelete = persons.find(p => p.id === id)
+    if(window.confirm(`Delete ${personToDelete.name}?`)) {
+      services
+        .removePerson(id)
+        .then(setPersons(persons.filter(person => person.id !== id)))
+    }
+  }
+
 
   return (
     <div>
@@ -52,6 +83,7 @@ const App = () => {
       <List 
         persons={persons} 
         filterText={filterText}
+        handleDelete={handleDelete}
       />
     </div>
   )
