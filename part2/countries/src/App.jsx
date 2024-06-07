@@ -25,7 +25,6 @@ function App() {
   const handleClick = (country) => {
     setFilteredCountries([country])
   }
-  
   return (
     <>
       <p>Find Countries <input value={text} onChange={((e) => setText(e.target.value))} /></p>

@@ -21,8 +21,7 @@ const Country = ({ data }) => {
       .then(response => 
         setWeather(response.data.main.temp)) 
   }
-
-
+  
   return (
    <div>
       <h1>{data.name.common}</h1>
