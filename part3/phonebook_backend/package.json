@@ -8,7 +8,8 @@
     "dev": "nodemon index.js",
     "start": "node index.js",
     "build:ui": "rm -rf dist && cd ../../part2/phonebook && npm run build && cp -r dist ../../part3/phonebook_backend",
-    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push && cp -r dist ../../../repos/phonebook-test"
+    "deploy:local": "npm run build:ui && git add . && git commit -m uibuild && git push",
+    "deploy:full": "npm run deploy:local && cd ../../../repos/phonbook-test && rm -rf dist"
   },
   "author": "Mat",
   "license": "ISC",
