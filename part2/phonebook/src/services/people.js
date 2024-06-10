@@ -1,7 +1,6 @@
 import axios from 'axios'
-import { get } from 'lodash'
 
-const baseUrl = 'http://localhost:3001/peoples'
+const baseUrl = 'http://localhost:3001/api/persons'
 
 const getAll = () => {
   const request = axios.get(baseUrl)

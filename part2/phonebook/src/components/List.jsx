@@ -5,9 +5,6 @@ const List = ({ persons, filterText, handleDelete }) => {
     <>
       <h2>Numbers</h2>
       {!filterText && persons.map((person) => 
-      // <p key={person.name} >
-      //   {person.name} {person.number}
-      // </p>
         <Person key={person.name} person={person} handleDelete={handleDelete}/>
     )}
       {filterText && persons.map((person) => (
