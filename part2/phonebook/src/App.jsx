@@ -15,6 +15,8 @@ const App = () => {
   const [successMessage, setSuccessMessage] = useState(null)
 
   useEffect(() => {
+    console.log('success')
+    
     services
       .getAll()
       .then(initialPersons => {
@@ -25,11 +27,6 @@ const App = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-  // Alert if not every field is filled 
-    if(newName === '' || newNumber === '') {
-      alert('Please fill every field')
-      return
-    }
   //Check if the person is already on the list
     if (persons.some((person) => 
       person.name.trim() === newName.trim() && person.number.trim() === newNumber.trim())) {
@@ -41,7 +38,6 @@ const App = () => {
           if(window.confirm(`${newName.trim()} is already in the phonebook, do you want to update the number?`)) {
             const personToUpdate = persons.find(person => person.name.trim() === newName.trim())
             const updatedPerson = {...personToUpdate, number: newNumber}
-            console.log(updatedPerson.id)
             services
               .update(updatedPerson.id, updatedPerson)
               .then(returnedPerson => {
@@ -71,6 +67,12 @@ const App = () => {
             setSuccessMessage(`${newPerson.name} addedd succesfully`)
             setTimeout(() => {
               setSuccessMessage(null)
+            }, 5000)
+          })
+          .catch(error => {
+            setErrorMessage(error.response.data.error)
+            setTimeout(() => {
+              setErrorMessage(null)
             }, 5000)
           })
           
