@@ -13,8 +13,9 @@ logger.info('connecting to MongoDB...')
 mongoose.connect(config.URI)
   .then(response => logger.info('Connected to MongoDB'))
 
-app.use(cors())
 app.use(express.json())
+app.use(middleware.requestLogger)
+app.use(cors())
 
 app.use('/api/blogs', blogsRouter)
 app.use(middleware.errorHandler)

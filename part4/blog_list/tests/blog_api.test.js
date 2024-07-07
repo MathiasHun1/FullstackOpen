@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 const app = require('../app')
 const Blog = require('../models/blog')
 const helper = require('./test_helper')
+const { log } = require('console')
 
 const api = supertest(app)
 
@@ -70,7 +71,7 @@ test('if likes prop not included, it defaults to 0', async () => {
   assert.strictEqual(result.body.likes, 0)
 })
 
-test.only('response 400 if url or title props are missing ', async () => {
+test('response 400 if url or title props are missing ', async () => {
   const newBlog = ({
     author: "Karl May",
     likes: 25
@@ -81,6 +82,36 @@ test.only('response 400 if url or title props are missing ', async () => {
     .send(newBlog)
     .expect(400)
 
+})
+
+test('deletes a blog', async () => {
+  const response = await api.get('/api/blogs')
+  const allBlogs = response.body
+  const lastBlog = allBlogs[allBlogs.length-1]
+
+  await api
+    .delete(`/api/blogs/${lastBlog.id}`)
+    .expect(204)
+
+  const newResponse = await api.get('/api/blogs')
+  const newAllBlogs = newResponse.body
+
+  assert.strictEqual(helper.initialBlogs.length, newAllBlogs.length +1)
+})
+
+test.only('update blog likes', async () => {
+  const blogsList = await helper.blogsInDb()
+  const lastBlogId = blogsList[blogsList.length-1].id
+
+  await api
+    .put(`/api/blogs/${lastBlogId}`)
+    .send({likes: 33})
+    .expect(200)
+
+  const updatedBlog = await Blog.findById(lastBlogId)
+
+  assert(33, updatedBlog.likes)
+  console.log(updatedBlog);
 })
 
 after(async () => {
