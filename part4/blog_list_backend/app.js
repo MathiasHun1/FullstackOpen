@@ -17,6 +17,7 @@ const main = async () => {
   logger.info('Connected to MongoDB')
 
   app.use(express.json())
+  app.use(cors())
   if (process.env.NODE_ENV !== 'test') {
   app.use(requestLogger)
   }

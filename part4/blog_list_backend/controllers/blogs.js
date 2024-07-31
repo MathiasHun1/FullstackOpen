@@ -47,9 +47,9 @@ blogsRouter.delete('/:id', async (request, response) => {
   if(!user) {
     return response.status(401).json({error: 'token invalid'})
   }
-
+  
   const blog = await Blog.findById(request.params.id)
-
+  
   if (blog.user.toString() !== user._id.toString()) {
     return response.status(401).json({error: 'blog deletion allowed only for the owner'})
   }
@@ -61,7 +61,7 @@ blogsRouter.delete('/:id', async (request, response) => {
 
 blogsRouter.put('/:id', async (request, response) => {
   const { likes } = request.body
-
+  
   const user = request.user
   if (!user) {
     return response.status(401).json({error: 'token invalid'})
@@ -74,6 +74,20 @@ blogsRouter.put('/:id', async (request, response) => {
 
   const result = await Blog.findOneAndUpdate({_id: request.params.id}, { likes: likes }, {new: true})
   response.status(200).json(result)
+})
+
+blogsRouter.put('/:id/likes', async (request, response) => {
+  const { id } = request.params
+
+  const blog = await Blog.findById(id)
+  if(!blog) {
+    response.status(404).json({error: 'blog not found!'})
+  }
+  blog.likes++
+
+  const updatedBlog = await blog.save()
+
+  response.json(updatedBlog)
 })
 
 module.exports = blogsRouter 
