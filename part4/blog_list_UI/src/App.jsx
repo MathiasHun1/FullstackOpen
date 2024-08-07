@@ -92,7 +92,7 @@ const App = () => {
     }
     }
 
-  const handleLike = async (blogId) => {
+  const addLike = async (blogId) => {
     try {
       const response = await blogService.updateLike(blogId)
 
@@ -150,7 +150,7 @@ const App = () => {
           <BlogsList 
             blogs={blogs} 
             deleteBlog={deleteBlog}
-            handleLike={handleLike}
+            addLike={addLike}
           />
         </>
       )}

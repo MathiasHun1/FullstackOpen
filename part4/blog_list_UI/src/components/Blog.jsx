@@ -2,24 +2,22 @@ import { useState } from "react"
 import Button from "./Button"
 import { MaterialSymbol } from 'react-material-symbols'
 
-const Blog = ({ blog, deleteBlog, handleLike }) => {
+const Blog = ({ blog, deleteBlog, addLike }) => {
   const [isOpened, setIsOpened] = useState(false)
-  const { author, likes, url, title, user } = blog
+  const { author, likes, url, title, user, id } = blog
 
   const toggleOpen = () => {
     setIsOpened(!isOpened)
   }
- 
-  const addLike = async (id) => {
-    await handleLike(id)
-  }
 
   return (
-  <div className="mb-1 p-2 border-2 border-black">
+    <div className="mb-1 p-2 border-2 border-black">
 
     <p>
-      <i>{author}:</i> <strong>{title}</strong>
-      <button 
+      <i id="author">{author}</i> 
+      <strong id="title">{title}</strong>
+
+      <button id="toggleButton"
         className="btn p-1 min-h-0 h-fit  ml-2"
         onClick={toggleOpen}
       >
@@ -30,14 +28,14 @@ const Blog = ({ blog, deleteBlog, handleLike }) => {
     {isOpened && (
       <>
         <div className="flex flex-row gap-4">
-          <p className="inline">likes: <strong>{likes}</strong>
+          <p id="likes" className="inline">likes: <strong>{likes}</strong>
           </p>
-          <button className="px-2 hover:bg-gray-300" onClick={() => addLike(blog.id)}>
+          <button className="px-2 hover:bg-gray-300" onClick={() => addLike(id)}>
             <MaterialSymbol icon="thumb_up" size={24} fill grade={-25} color='blue' />
           </button>
         </div>
-        <p>url: <strong>{url}</strong></p>
-        <p>user: <strong>{user.username}</strong></p>
+        <p id="url">url: <strong id="url">{url}</strong></p>
+        <p id="user">user: <strong>{user.username}</strong></p>
       </>
     )}
 
