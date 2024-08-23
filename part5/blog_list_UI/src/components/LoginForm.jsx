@@ -10,23 +10,27 @@ const LoginForm = ({ handleLogin, username, setUserName, password, setPassword})
           <h2 className='text-2xl'>Log in to application</h2>
 
           <div>
-            username
-            <input
-              className='border-2 bg-sky-100'
-              type="text"
-              value={username}
-              onChange={({target}) => setUserName(target.value)}
-            />
+            <label>
+              username
+              <input
+                className='border-2 bg-sky-100'
+                type="text"
+                value={username}
+                onChange={({target}) => setUserName(target.value)}
+              />
+            </label>
           </div>
 
           <div>
-            password
-            <input
-              className='border-2 bg-sky-100'
-              type="text"
-              value={password}
-              onChange={({target}) => setPassword(target.value)}
-            />
+            <label>
+              password
+              <input
+                className='border-2 bg-sky-100'
+                type="text"
+                value={password}
+                onChange={({target}) => setPassword(target.value)}
+              />
+            </label>
           </div>
 
         <Button type='submit' text='Login'/>

@@ -18,8 +18,11 @@ const main = async () => {
 
   app.use(express.json())
   app.use(cors())
-  if (process.env.NODE_ENV !== 'test') {
-  app.use(requestLogger)
+
+  if (process.env.NODE_ENV === 'test') {
+    app.use(requestLogger)
+    const testRouter = require('./controllers/test')
+    app.use('/api/test', testRouter)
   }
   
   app.use(tokenExtractor)

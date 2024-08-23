@@ -2,7 +2,6 @@ const Blog = require('./models/blog')
 const User = require('./models/user')
 const mongoose = require('mongoose')
 const config = require('./utils/config')
-const app = require('./app')
 require('dotenv').config()
 
 const initialBlogs = [
@@ -45,16 +44,14 @@ const initBlogs = async () => {
 }
 
 const main = async () => {
-  console.log(process.env.TEST_MONGODB_URI);
-  
   await mongoose.connect(process.env.TEST_MONGODB_URI)
   console.log('connected')
 
-  await User.deleteMany({})
+  // await User.deleteMany({})
   await Blog.deleteMany({})
   // await User.insertMany(initialUsers)
   
-  // mongoose.connection.close()
+  mongoose.connection.close()
 } 
 
 main()

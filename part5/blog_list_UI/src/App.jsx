@@ -45,7 +45,7 @@ const App = () => {
       setUserName('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('log in failed')
+      setErrorMessage('Wrong credentials')
       setTimeout(() => {
         setErrorMessage(null)
       }, 3000)

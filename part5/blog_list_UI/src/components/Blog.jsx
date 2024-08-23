@@ -11,7 +11,7 @@ const Blog = ({ blog, deleteBlog, addLike }) => {
   }
 
   return (
-    <div className="mb-1 p-2 border-2 border-black">
+    <div data-testid='blogElement' className="mb-1 p-2 border-2 border-black">
 
     <p>
       <i id="author">{author}</i> 
@@ -28,9 +28,9 @@ const Blog = ({ blog, deleteBlog, addLike }) => {
     {isOpened && (
       <>
         <div className="flex flex-row gap-4">
-          <p id="likes" className="inline">likes: <strong>{likes}</strong>
+          <p id="likes" className="inline">likes: <strong data-testid='likes-counter'>{likes}</strong>
           </p>
-          <button className="px-2 hover:bg-gray-300" onClick={() => addLike(id)}>
+          <button data-testid='like-button' className="px-2 hover:bg-gray-300" onClick={() => addLike(id)}>
             <MaterialSymbol icon="thumb_up" size={24} fill grade={-25} color='blue' />
           </button>
         </div>
