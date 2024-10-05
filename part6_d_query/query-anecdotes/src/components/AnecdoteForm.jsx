@@ -4,7 +4,7 @@ import { useContext } from "react"
 import NotificationContext from "../contexts"
 
 const AnecdoteForm = () => {
-  const [notification, dispachNotification] = useContext(NotificationContext)
+  const { notification, dispachNotification } = useContext(NotificationContext)
 
   const queryClient = useQueryClient()
 
