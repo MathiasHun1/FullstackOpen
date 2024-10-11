@@ -8,13 +8,16 @@ import BlogsList from './components/BlogsList'
 import BlogForm from './components/BlogForm'
 import Message from './components/Message'
 import 'react-material-symbols/rounded'
+import { useDispatch } from 'react-redux'
+import { createMessage, resetMessage } from './app/messageSlice'
 
 const App = () => {
-  const [errorMessage, setErrorMessage] = useState(null)
   const [blogs, setBlogs] = useState([])
   const [username, setUserName] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+
+  const dispatch = useDispatch()
 
 
   const blogRef = useRef()
@@ -44,9 +47,9 @@ const App = () => {
       setUserName('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
+      dispatch(createMessage('Wrong credentials'))
       setTimeout(() => {
-        setErrorMessage(null)
+        dispatch(resetMessage())
       }, 3000)
     }
   }
@@ -69,9 +72,9 @@ const App = () => {
 
     } catch(exception) {
       console.log(exception);
-      setErrorMessage('Something went wrong')
+      dispatch(createMessage('Something went wrong'))
       setTimeout(() => {
-        setErrorMessage(null)
+        dispatch(resetMessage())
       }, 3000)
     }
   } 
@@ -83,9 +86,9 @@ const App = () => {
         await blogService.deleteBlog(id)
         setBlogs(blogs.filter(blog => blog.id !== id))
       } catch (error) {
-        setErrorMessage('You are not authorized to delete this blog')
+        dispatch(createMessage('You are not authorized to delete this blog'))
         setTimeout(() => {
-          setErrorMessage(null)
+          dispatch(resetMessage())
         }, 3000)
       }
     }
@@ -106,9 +109,9 @@ const App = () => {
 
     } catch (error) {
       console.log(error)
-      setErrorMessage('You cant update this blog')
+      dispatch(createMessage('You cant update this blog'))
       setTimeout(() => {
-        setErrorMessage(null)
+        dispatch(resetMessage())
       }, 3000)
     }
   }
@@ -116,7 +119,7 @@ const App = () => {
 
   return (
     <div className='px-6 '>
-      <Message errorMessage={errorMessage}/>
+      <Message />
       <h2 className='text-3xl mb-4 font-medium'>Blogs</h2>
       
       {user === null && 
