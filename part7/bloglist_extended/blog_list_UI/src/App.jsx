@@ -10,15 +10,14 @@ import Message from './components/Message'
 import 'react-material-symbols/rounded'
 import { useDispatch } from 'react-redux'
 import { createMessage, resetMessage } from './app/messageSlice'
+import { initializeBlogs } from './app/blogSlice'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [username, setUserName] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-
+  
   const dispatch = useDispatch()
-
 
   const blogRef = useRef()
 
@@ -27,18 +26,8 @@ const App = () => {
     setUser(loggedInUser)
   }, [])
 
-  useEffect(() => {
-    const loadBlogs = async () => {
-      const blogs = await blogService.getAll() 
-      setBlogs(blogs)
-    }
-    loadBlogs()
-  }, [])
-
-
   const handleLogin = async (e) => {
     e.preventDefault()
-
     try {
       const user = await loginService.login({username, password})
 
@@ -59,25 +48,25 @@ const App = () => {
     window.localStorage.clear()
   } 
 
-  const createBlog = async (newBlog) => {
+  // const createBlog = async (newBlog) => {
 
-    try {
+  //   try {
+  //     blogService.setToken(user)
+  //     const blogToAdd = await blogService.add(newBlog)
+  //     blogToAdd.user = { ...user }
 
-      blogService.setToken(user)
-      const blogToAdd = await blogService.add(newBlog)
-      blogToAdd.user = { ...user }
+  //     setBlogs(blogs.concat(blogToAdd))
+  //     blogRef.current.toggleVisibility()
+  //     dispatch(initializeBlogs())
 
-      setBlogs(blogs.concat(blogToAdd))
-      blogRef.current.toggleVisibility()
-
-    } catch(exception) {
-      console.log(exception);
-      dispatch(createMessage('Something went wrong'))
-      setTimeout(() => {
-        dispatch(resetMessage())
-      }, 3000)
-    }
-  } 
+  //   } catch(exception) {
+  //     console.log(exception);
+  //     dispatch(createMessage('Something went wrong'))
+  //     setTimeout(() => {
+  //       dispatch(resetMessage())
+  //     }, 3000)
+  //   }
+  // } 
 
   const deleteBlog = async (id) => {
     if(window.confirm('Are you sure?')) {
@@ -116,7 +105,6 @@ const App = () => {
     }
   }
 
-
   return (
     <div className='px-6 '>
       <Message />
@@ -141,14 +129,13 @@ const App = () => {
           </div>
           <Togglable buttonLabel='Add new blog' ref={blogRef}>
             <BlogForm  
-              blogs={blogs}
-              setBlogs={setBlogs}
-              createBlog={createBlog}
+              // setBlogs={setBlogs}
+              // createBlog={createBlog}
+              user={user}
             />
           </Togglable>
 
           <BlogsList 
-            blogs={blogs} 
             deleteBlog={deleteBlog}
             addLike={addLike}
           />

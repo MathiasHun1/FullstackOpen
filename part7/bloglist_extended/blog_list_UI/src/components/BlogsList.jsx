@@ -1,8 +1,17 @@
 import { useEffect } from "react"
 import Blog from "./Blog"
+import { useDispatch, useSelector } from "react-redux"
+import { initializeBlogs } from "../app/blogSlice"
 
-const BlogsList = ({ blogs, deleteBlog, addLike }) => {
+const BlogsList = ({ deleteBlog, addLike }) => {
+  const blogs = useSelector(state => state.blogs)
   
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(initializeBlogs())
+  }, [dispatch])
+
   let sortedBlogs = [... blogs].sort((a, b) => b.likes - a.likes)
 
   return (

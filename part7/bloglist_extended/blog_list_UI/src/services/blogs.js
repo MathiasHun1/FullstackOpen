@@ -18,8 +18,7 @@ const getAll = async () => {
   return response.data
 }
 
-const add = async (credentials) => {
-
+const create = async (credentials) => {
   const response = await axios.post(baseUrl, credentials, config())
   return response.data
 }
@@ -41,4 +40,4 @@ const updateLike = async (id) => {
   return response.data
 }
 
-export default { getAll, add, setToken, deleteBlog, updateLike }
+export default { getAll, create, setToken, deleteBlog, updateLike }

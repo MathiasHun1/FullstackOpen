@@ -4,7 +4,6 @@ import Filter from './components/Filter'
 import Notification from './components/Notification'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { setAll } from './reducers/anecdoteReducer'
 import { initializeAnecdotes } from './reducers/anecdoteReducer'
 
 const App = () => {

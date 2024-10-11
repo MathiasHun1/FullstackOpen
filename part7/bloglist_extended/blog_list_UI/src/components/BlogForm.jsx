@@ -1,16 +1,30 @@
 import { useState } from "react" 
 import blogService from '../services/blogs'
 import Message from "./Message"
+import { createBlog } from "../app/blogSlice"
+import { useDispatch } from "react-redux"
 
-const BlogForm = ({ createBlog }) => {
+const BlogForm = ({user}) => {
   const [title, setTitle] = useState('')
   const [author, setAuhor] = useState('')
   const [url, setUrl] = useState('')
 
-  const addBlog = async (e) => {
+  const dispatch = useDispatch()
+
+  // const addBlog = async (e) => {
+  //   e.preventDefault()
+
+  //   await createBlog({ title, author, url })
+    
+  //   setTitle('')
+  //   setAuhor('')
+  //   setUrl('')
+  // }
+
+  const addBlog = (e) => {
     e.preventDefault()
 
-    await createBlog({ title, author, url })
+    dispatch(createBlog(user, { title, author, url }))
     
     setTitle('')
     setAuhor('')

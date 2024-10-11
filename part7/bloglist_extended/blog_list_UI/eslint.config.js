@@ -38,7 +38,8 @@ export default [
       ],
       'react/prop-types': 0,
       'react/display-name': 0,
-      'no-unused-vars': 'off'
+      'no-unused-vars': 'off',
+      'react-redux/useSelector-prefer-selectors': 0
     },
   },
 ]
