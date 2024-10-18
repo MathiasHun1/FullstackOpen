@@ -8,8 +8,6 @@ export const messageSlice = createSlice({
     },
     reducers: {
         createMessage: (state, action) => {
-            console.log('FOO');
-            
             state.value = action.payload
         },
         resetMessage: state => {

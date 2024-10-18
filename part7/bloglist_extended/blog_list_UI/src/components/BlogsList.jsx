@@ -1,9 +1,9 @@
 import { useEffect } from "react"
 import Blog from "./Blog"
 import { useDispatch, useSelector } from "react-redux"
-import { initializeBlogs } from "../app/blogSlice"
+import { initializeBlogs, deleteBlog } from "../app/blogSlice"
 
-const BlogsList = ({ deleteBlog, addLike }) => {
+const BlogsList = ({ addLike }) => {
   const blogs = useSelector(state => state.blogs)
   
   const dispatch = useDispatch()

@@ -25,19 +25,12 @@ const create = async (credentials) => {
 
 
 const deleteBlog = async (id) => {
-  const header = {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  }
-  
-  await axios.delete(`${baseUrl}/${id}`, config())
+    await axios.delete(`${baseUrl}/${id}`, config())
 }
 
-const updateLike = async (id) => {
-
+const addLike = async (id) => {
   const response = await axios.put(`${baseUrl}/${id}/likes`)
   return response.data
 }
 
-export default { getAll, create, setToken, deleteBlog, updateLike }
+export default { getAll, create, setToken, deleteBlog, addLike }

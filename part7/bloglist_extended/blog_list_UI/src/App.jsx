@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import { useState, useEffect, useRef } from 'react'
-import blogService from './services/blogs'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
@@ -8,23 +7,26 @@ import BlogsList from './components/BlogsList'
 import BlogForm from './components/BlogForm'
 import Message from './components/Message'
 import 'react-material-symbols/rounded'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { createMessage, resetMessage } from './app/messageSlice'
-import { initializeBlogs } from './app/blogSlice'
+import { setUser, clearUser } from './app/userSlice'
 
 const App = () => {
   const [username, setUserName] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
-  
+
+  const currentUser = useSelector(state => state.user)
+
   const dispatch = useDispatch()
 
   const blogRef = useRef()
 
   useEffect(() => {
     const loggedInUser = JSON.parse(window.localStorage.getItem('loggedInUser'))
-    setUser(loggedInUser)
-  }, [])
+    if (loggedInUser) {
+      dispatch(setUser(loggedInUser))
+    }
+  }, [dispatch])
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -32,7 +34,7 @@ const App = () => {
       const user = await loginService.login({username, password})
 
       window.localStorage.setItem('loggedInUser', JSON.stringify(user))
-      setUser(user)
+      dispatch(setUser(user))
       setUserName('')
       setPassword('')
     } catch (exception) {
@@ -44,73 +46,16 @@ const App = () => {
   }
 
   const handleLogout = () => {
-    setUser(null)
+    dispatch(clearUser())
     window.localStorage.clear()
   } 
 
-  // const createBlog = async (newBlog) => {
-
-  //   try {
-  //     blogService.setToken(user)
-  //     const blogToAdd = await blogService.add(newBlog)
-  //     blogToAdd.user = { ...user }
-
-  //     setBlogs(blogs.concat(blogToAdd))
-  //     blogRef.current.toggleVisibility()
-  //     dispatch(initializeBlogs())
-
-  //   } catch(exception) {
-  //     console.log(exception);
-  //     dispatch(createMessage('Something went wrong'))
-  //     setTimeout(() => {
-  //       dispatch(resetMessage())
-  //     }, 3000)
-  //   }
-  // } 
-
-  const deleteBlog = async (id) => {
-    if(window.confirm('Are you sure?')) {
-      try {
-        blogService.setToken(user)
-        await blogService.deleteBlog(id)
-        setBlogs(blogs.filter(blog => blog.id !== id))
-      } catch (error) {
-        dispatch(createMessage('You are not authorized to delete this blog'))
-        setTimeout(() => {
-          dispatch(resetMessage())
-        }, 3000)
-      }
-    }
-    }
-
-  const addLike = async (blogId) => {
-    try {
-      const response = await blogService.updateLike(blogId)
-
-      const updatedBlogs = blogs.map(blog => {
-        if (blog.id === response.id) {
-          blog.likes++
-        }
-        return blog
-      })
-
-      setBlogs(updatedBlogs)
-
-    } catch (error) {
-      console.log(error)
-      dispatch(createMessage('You cant update this blog'))
-      setTimeout(() => {
-        dispatch(resetMessage())
-      }, 3000)
-    }
-  }
-
   return (
-    <div className='px-6 '>
+    <div >
       <Message />
-      <h2 className='text-3xl mb-4 font-medium'>Blogs</h2>
+      <h2 >Blogs</h2>
       
-      {user === null && 
+      {!currentUser && 
           <LoginForm
             handleLogin={handleLogin}
             username={username}
@@ -120,25 +65,20 @@ const App = () => {
           />
       }
 
-
-      {user !== null && (
+      {currentUser && (
         <>
-          <div className="mb-6 flex gap-2 items-center">
-            <h2 className="inline">{user.username} logged in</h2>
-            <button className="min-h-0 h-8 px-6 btn inline" onClick={handleLogout}>log out</button>
+          <div >
+            <h2 >{currentUser.username} logged in</h2>
+            <button onClick={handleLogout}>log out</button>
           </div>
           <Togglable buttonLabel='Add new blog' ref={blogRef}>
             <BlogForm  
-              // setBlogs={setBlogs}
-              // createBlog={createBlog}
-              user={user}
+              blogRef={blogRef}
+              currentUser={currentUser}
             />
           </Togglable>
 
-          <BlogsList 
-            deleteBlog={deleteBlog}
-            addLike={addLike}
-          />
+          <BlogsList currentUser={currentUser} />
         </>
       )}
     </div>
