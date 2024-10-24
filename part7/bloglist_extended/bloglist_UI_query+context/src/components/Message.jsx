@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 const Message = ({ errorMessage, successMessage }) => {
   return (
@@ -8,12 +8,10 @@ const Message = ({ errorMessage, successMessage }) => {
       )}
 
       {successMessage && (
-        <p className="p-4 text-green-800 bg-lime-200 rounded-md">
-          {successMessage}
-        </p>
+        <p className="p-4 text-green-800 bg-lime-200 rounded-md">{successMessage}</p>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Message;
+export default Message
