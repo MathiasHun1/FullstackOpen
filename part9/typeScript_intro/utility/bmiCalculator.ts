@@ -3,6 +3,7 @@
 //Should print: Normal range
 
 //TASK: Create an npm script for running the program with the command npm run calculateBmi
+
 interface BmiValues {
   height: number;
   weight: number;
