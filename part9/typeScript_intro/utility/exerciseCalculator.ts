@@ -1,4 +1,4 @@
-interface Result {
+export interface Result {
   periodLength: number;
   trainingDays: number;
   success: boolean;
@@ -31,9 +31,9 @@ const parseArgs = (args: string[]): ArgValues => {
   };
 };
 
-const calculateExercises = (
+export const calculateExercises = (
   trainingHoursPerDay: number[],
-  target: number,
+  target: number
 ): Result => {
   const periodLength = trainingHoursPerDay.length;
   const trainingDays = trainingHoursPerDay.reduce((total, value) => {
@@ -43,7 +43,7 @@ const calculateExercises = (
 
   const average =
     trainingHoursPerDay.reduce(
-      (prevValue, currentValue) => prevValue + currentValue,
+      (prevValue, currentValue) => prevValue + currentValue
     ) / trainingHoursPerDay.length;
 
   const success = average >= target ? true : false;
@@ -84,15 +84,19 @@ const calculateExercises = (
   };
 };
 
-try {
-  const { trainingHoursPerDay, target } = parseArgs(process.argv);
-  console.log(calculateExercises(trainingHoursPerDay, target));
-} catch (error) {
-  let errorMessage = "Valami nem sikerült: ";
-  if (error instanceof Error) {
-    errorMessage += error.message;
+const main = () => {
+  try {
+    const { trainingHoursPerDay, target } = parseArgs(process.argv);
+    console.log(calculateExercises(trainingHoursPerDay, target));
+  } catch (error) {
+    let errorMessage = "Valami nem sikerült: ";
+    if (error instanceof Error) {
+      errorMessage += error.message;
+    }
+    console.log(errorMessage);
   }
-  console.log(errorMessage);
-}
+};
 
-// console.log(calculateExercises([1, 1.6, 0, 3, 0, 0, 2], 2))
+if (require.main === module) {
+  main();
+}

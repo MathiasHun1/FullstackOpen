@@ -1,26 +1,39 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
+import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
-import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+import stylistic from "@stylistic/eslint-plugin";
 
-export default [
-  { files: ["**/*.{js,mjs,cjs,ts}"] },
-  { languageOptions: { globals: globals.node } },
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
-  eslintPluginPrettierRecommended,
+export default tseslint.config(
   {
-    rules: {
-      "@typescript-eslint/no-unused-vars": 0,
-    },
-  },
-  {
-    "prettier/prettier": [
-      "error",
-      {
-        singleQuote: true,
-        parser: "flow",
-      },
+    files: ["**/*.ts"],
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommendedTypeChecked,
     ],
-  },
-];
+    languageOptions: {
+      parserOptions: {
+        project: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    plugins: {
+      "@stylistic": stylistic,
+    },
+    rules: {
+      "@stylistic/semi": "error",
+      "@typescript-eslint/no-unsafe-assignment": "error",
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/restrict-template-expressions": "off",
+      "@typescript-eslint/restrict-plus-operands": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_" },
+      ],
+    },
+  }
+  // {
+  //   files: ["**/*.mjs"],
+  //   extends: [tseslint.configs.disableTypeChecked],
+  // }
+);
