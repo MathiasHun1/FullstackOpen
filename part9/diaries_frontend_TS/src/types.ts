@@ -1,8 +1,8 @@
 export interface Diary {
   id: number;
   date: string;
-  weather: string;
-  visibility: string;
+  weather: Weather;
+  visibility: Visibility;
   comment?: string;
 }
 
