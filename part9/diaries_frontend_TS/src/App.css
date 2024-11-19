@@ -5,3 +5,7 @@ p {
 .diaryElement {
   margin-bottom: 12px;
 }
+
+.errorMessage {
+  color: red;
+}

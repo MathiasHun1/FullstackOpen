@@ -1,7 +1,12 @@
-import { useEffect, useState } from 'react';
+import { SyntheticEvent, useEffect, useState } from 'react';
 import './App.css';
 import { Diary, DiaryNoId } from './types';
 import diaryServices from './services/diary';
+import { AxiosError } from 'axios';
+
+function ErrorMessage({ errorMessage }: { errorMessage: string }) {
+  return <h3 className="errorMessage">Error: {errorMessage}</h3>;
+}
 
 function App() {
   const [diaries, setDiaries] = useState<Diary[]>([]);
@@ -9,25 +14,59 @@ function App() {
   const [visibility, setVisibility] = useState('');
   const [weather, setWeather] = useState('');
   const [comment, setComment] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string[] | null>(null);
 
   useEffect(() => {
     diaryServices.getAll().then((result) => setDiaries(result));
   }, []);
 
-  const submitDiary = async () => {
+  useEffect(() => {
+    if (errorMessage) {
+      const timer = setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [errorMessage]);
+
+  const submitDiary = async (e: SyntheticEvent) => {
+    e.preventDefault();
+
     const newDiary: DiaryNoId = {
       date,
       visibility,
       weather,
       comment,
     };
-    const createdDiary = await diaryServices.addNew(newDiary);
-    diaries.concat(createdDiary);
+
+    try {
+      const createdDiary = await diaryServices.addNew(newDiary);
+      setDiaries(diaries.concat(createdDiary));
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response) {
+          console.log(error.response.data);
+          setErrorMessage([...error.response.data]);
+          return;
+        }
+
+        setErrorMessage([error.message]);
+        return;
+      } else if (error instanceof Error) {
+        console.log(error);
+      }
+    }
   };
 
   return (
     <div>
       <h2>Add new diary</h2>
+
+      {errorMessage &&
+        errorMessage.map((message) => (
+          <ErrorMessage key={message} errorMessage={message} />
+        ))}
+
       <form onSubmit={submitDiary}>
         <div>
           date:

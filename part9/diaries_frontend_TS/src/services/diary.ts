@@ -9,8 +9,16 @@ const getAll = async () => {
 };
 
 const addNew = async (diary: DiaryNoId) => {
-  const response = await axios.post<Diary>(baseURL, diary);
-  return response.data;
+  try {
+    const response = await axios.post<Diary>(baseURL, diary);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error;
+    }
+
+    throw new Error('unknown error');
+  }
 };
 
 export default {
