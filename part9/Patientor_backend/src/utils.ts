@@ -1,29 +1,31 @@
-import { NewPatientEntry, Gender } from "./types";
+import { NewPatientEntry, Gender } from './types';
+import { z } from 'zod';
+import { Request, Response, NextFunction } from 'express';
 
 export const toNewPatientEntry = (object: unknown): NewPatientEntry => {
-  if (!object || typeof object !== "object") {
-    throw new Error("Incorrect or missing data");
+  if (!object || typeof object !== 'object') {
+    throw new Error('Incorrect or missing data');
   }
 
   if (
-    "name" in object &&
-    "dateOfBirth" in object &&
-    "ssn" in object &&
-    "gender" in object &&
-    "occupation" in object
+    'name' in object &&
+    'dateOfBirth' in object &&
+    'ssn' in object &&
+    'gender' in object &&
+    'occupation' in object
   ) {
     const newEntry: NewPatientEntry = {
-      name: parseStringProperty(object.name, "name"),
-      dateOfBirth: parseStringProperty(object.dateOfBirth, "date of birth"),
-      ssn: parseStringProperty(object.ssn, "ssn"),
+      name: z.string().parse(object.name),
+      dateOfBirth: parseStringProperty(object.dateOfBirth, 'date of birth'),
+      ssn: parseStringProperty(object.ssn, 'ssn'),
       gender: parseGender(object.gender),
-      occupation: parseStringProperty(object.occupation, "occupation"),
+      occupation: parseStringProperty(object.occupation, 'occupation'),
     };
 
     return newEntry;
   }
 
-  throw new Error("Incorrect data: some fields are missing");
+  throw new Error('Incorrect data: some fields are missing');
 };
 
 const parseStringProperty = (text: unknown, filedName: string) => {
@@ -35,12 +37,12 @@ const parseStringProperty = (text: unknown, filedName: string) => {
 };
 
 const isString = (text: unknown): text is string => {
-  return typeof text === "string" || text instanceof String;
+  return typeof text === 'string' || text instanceof String;
 };
 
 const parseGender = (text: unknown) => {
   if (!text || !isString(text) || !isGender(text)) {
-    throw new Error("Incorrect or missing gender");
+    throw new Error('Incorrect or missing gender');
   }
 
   return text;
@@ -52,4 +54,38 @@ const isGender = (text: string): text is Gender => {
       return v.toString();
     })
     .includes(text);
+};
+
+export const newPatientSchema = z.object({
+  name: z.string(),
+  dateOfBirth: z.string(),
+  ssn: z.string(),
+  gender: z.nativeEnum(Gender),
+  occupation: z.string(),
+});
+
+export const bodyParser = (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) => {
+  try {
+    newPatientSchema.parse(req.body);
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const errorHandler = (
+  error: unknown,
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (error instanceof z.ZodError) {
+    res.status(400).send({ error: error.issues });
+  } else {
+    next(error);
+  }
 };
