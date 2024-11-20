@@ -9,6 +9,11 @@ const getAll = async () => {
   return data;
 };
 
+const getById = async (userId: string) => {
+  const { data } = await axios.get<Patient>(`${apiBaseUrl}/patients/${userId}`);
+  return data;
+};
+
 const create = async (object: PatientFormValues) => {
   const { data } = await axios.post<Patient>(`${apiBaseUrl}/patients`, object);
 
@@ -20,4 +25,5 @@ const create = async (object: PatientFormValues) => {
 export default {
   getAll,
   create,
+  getById,
 };
