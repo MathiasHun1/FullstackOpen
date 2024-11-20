@@ -4,23 +4,25 @@ export enum Gender {
   Other = 'other',
 }
 
-// export type Gender = "female" | "male" | "other";
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface Entry {}
 
-export type DiagnosisEntry = {
+export interface DiagnosisEntry {
   code: string;
   name: string;
   latin?: string;
-};
+}
 
-export type PatientEntry = {
+export interface Patient {
   id: string;
   name: string;
   dateOfBirth: string;
   ssn: string;
   gender: Gender;
   occupation: string;
-};
+  entries: Entry[];
+}
 
-export type PatientEntrySensitive = Omit<PatientEntry, 'ssn'>;
-export type NewPatientEntry = Omit<PatientEntry, 'id'>;
+export type PatientNonSensitive = Omit<Patient, 'ssn' | 'entries'>;
+export type NewPatientEntry = Omit<Patient, 'id'>;
 export type NewPatientSensitive = Omit<NewPatientEntry, 'ssn'>;

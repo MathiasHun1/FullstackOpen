@@ -14,9 +14,25 @@ const getNonSensitivePatientsData = () => {
         occupation,
     }));
 };
-const addPatient = (entry) => {
-    const newPatient = Object.assign({ id: (0, uuid_1.v4)() }, entry);
-    patients_1.default.push(newPatient);
-    return newPatient;
+const getPatientById = (id) => {
+    const patient = patients_1.default.find((p) => p.id === id);
+    if (patient) {
+        return patient;
+    }
+    else {
+        throw new Error('No patient found with the given id');
+    }
 };
-exports.default = { getNonSensitivePatientsData, addPatient };
+const addPatient = (entry) => {
+    const patient = Object.assign({ id: (0, uuid_1.v4)() }, entry);
+    patients_1.default.push(patient);
+    const patientSensitive = {
+        id: patient.id,
+        name: patient.name,
+        dateOfBirth: patient.dateOfBirth,
+        gender: patient.gender,
+        occupation: patient.occupation,
+    };
+    return patientSensitive;
+};
+exports.default = { getNonSensitivePatientsData, addPatient, getPatientById };
