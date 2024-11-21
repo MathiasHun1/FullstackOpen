@@ -1,4 +1,5 @@
 import { BaseEntry } from '../../types';
+import DiagnosisElement from './DiagnosisElement';
 
 // const CodesList = ({ codes }: { diagnosisCode }) => {};
 
@@ -13,7 +14,9 @@ const EntriesList = ({ entries }: { entries: BaseEntry[] }) => {
 
           <ul>
             {entry.diagnosisCodes &&
-              entry.diagnosisCodes.map((code) => <li key={code}>{code}</li>)}
+              entry.diagnosisCodes.map((code) => (
+                <DiagnosisElement code={code} />
+              ))}
           </ul>
         </div>
       ))}
