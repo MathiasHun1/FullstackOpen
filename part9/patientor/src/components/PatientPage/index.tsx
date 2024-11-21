@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { Patient } from '../../types';
 import patientService from '../../services/patients';
+import EntriesList from '../PatientListPage/EntriesList';
 
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
@@ -15,7 +16,6 @@ const PatientPage = () => {
   useEffect(() => {
     if (userId) {
       patientService.getById(userId).then((patient) => {
-        console.log(patient);
         setPatient(patient);
       });
     }
@@ -41,6 +41,8 @@ const PatientPage = () => {
       </div>
       <p>ssh: {patient.ssn}</p>
       <p>occupation: {patient.occupation}</p>
+
+      <EntriesList entries={patient.entries} />
     </div>
   ) : (
     <div>
