@@ -11,14 +11,15 @@ const toNewPatientEntry = (object) => {
         'dateOfBirth' in object &&
         'ssn' in object &&
         'gender' in object &&
-        'occupation' in object) {
+        'occupation' in object &&
+        'entries' in object) {
         const newEntry = {
             name: zod_1.z.string().parse(object.name),
             dateOfBirth: parseStringProperty(object.dateOfBirth, 'date of birth'),
             ssn: parseStringProperty(object.ssn, 'ssn'),
             gender: parseGender(object.gender),
             occupation: parseStringProperty(object.occupation, 'occupation'),
-            entries: [],
+            entries: object.entries,
         };
         return newEntry;
     }
@@ -34,6 +35,9 @@ const parseStringProperty = (text, filedName) => {
 const isString = (text) => {
     return typeof text === 'string' || text instanceof String;
 };
+// const _isNumber = (value: unknown): value is number => {
+//   return typeof value === 'number' || value instanceof Number;
+// };
 const parseGender = (text) => {
     if (!text || !isString(text) || !isGender(text)) {
         throw new Error('Incorrect or missing gender');
@@ -47,6 +51,19 @@ const isGender = (text) => {
     })
         .includes(text);
 };
+// const isHealthCheckRating = (rating: number): rating is HealthCheckRating => {
+//   return Object.values(HealthCheckRating)
+//     .map((value) => {
+//       return Number(value);
+//     })
+//     .includes(rating);
+// };
+// const parseHealthCheckRating = (rating: unknown) => {
+//   if (!rating || !isNumber(rating) || !isHealthCheckRating(rating)) {
+//     throw new Error('Incorrect or missing healtCheck-rating');
+//   }
+//   return rating;
+// };
 exports.newPatientSchema = zod_1.z.object({
     name: zod_1.z.string(),
     dateOfBirth: zod_1.z.string(),

@@ -1,4 +1,4 @@
-import { NewPatientEntry, Gender } from './types';
+import { NewPatientEntry, Gender, Entry } from './types';
 import { z } from 'zod';
 import { Request, Response, NextFunction } from 'express';
 
@@ -12,7 +12,8 @@ export const toNewPatientEntry = (object: unknown): NewPatientEntry => {
     'dateOfBirth' in object &&
     'ssn' in object &&
     'gender' in object &&
-    'occupation' in object
+    'occupation' in object &&
+    'entries' in object
   ) {
     const newEntry: NewPatientEntry = {
       name: z.string().parse(object.name),
@@ -20,7 +21,8 @@ export const toNewPatientEntry = (object: unknown): NewPatientEntry => {
       ssn: parseStringProperty(object.ssn, 'ssn'),
       gender: parseGender(object.gender),
       occupation: parseStringProperty(object.occupation, 'occupation'),
-      entries: [],
+      //PROVISIONALLY assert the type
+      entries: object.entries as Entry[],
     };
 
     return newEntry;
@@ -41,6 +43,10 @@ const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String;
 };
 
+// const _isNumber = (value: unknown): value is number => {
+//   return typeof value === 'number' || value instanceof Number;
+// };
+
 const parseGender = (text: unknown) => {
   if (!text || !isString(text) || !isGender(text)) {
     throw new Error('Incorrect or missing gender');
@@ -56,6 +62,21 @@ const isGender = (text: string): text is Gender => {
     })
     .includes(text);
 };
+
+// const isHealthCheckRating = (rating: number): rating is HealthCheckRating => {
+//   return Object.values(HealthCheckRating)
+//     .map((value) => {
+//       return Number(value);
+//     })
+//     .includes(rating);
+// };
+
+// const parseHealthCheckRating = (rating: unknown) => {
+//   if (!rating || !isNumber(rating) || !isHealthCheckRating(rating)) {
+//     throw new Error('Incorrect or missing healtCheck-rating');
+//   }
+//   return rating;
+// };
 
 export const newPatientSchema = z.object({
   name: z.string(),
