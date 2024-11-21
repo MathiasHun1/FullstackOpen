@@ -1,9 +1,12 @@
-import { BaseEntry } from '../../types';
+import { BaseEntry, Diagnosis } from '../../types';
 import DiagnosisElement from './DiagnosisElement';
 
-// const CodesList = ({ codes }: { diagnosisCode }) => {};
+interface Props {
+  entries: BaseEntry[];
+  diagnoses: Diagnosis[];
+}
 
-const EntriesList = ({ entries }: { entries: BaseEntry[] }) => {
+const EntriesList = ({ entries, diagnoses }: Props) => {
   return (
     <>
       <h3>Entries</h3>
@@ -15,7 +18,11 @@ const EntriesList = ({ entries }: { entries: BaseEntry[] }) => {
           <ul>
             {entry.diagnosisCodes &&
               entry.diagnosisCodes.map((code) => (
-                <DiagnosisElement code={code} />
+                <DiagnosisElement
+                  key={code}
+                  code={code}
+                  diagnoses={diagnoses}
+                />
               ))}
           </ul>
         </div>

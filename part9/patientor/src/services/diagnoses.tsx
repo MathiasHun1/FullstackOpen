@@ -3,6 +3,11 @@ import { apiBaseUrl } from '../constants';
 
 import { Diagnosis } from '../types';
 
+const getAll = async () => {
+  const { data } = await axios.get<Diagnosis[]>(`${apiBaseUrl}/diagnoses`);
+  return data;
+};
+
 const getByCode = async (code: string) => {
   const { data } = await axios.get<Diagnosis>(
     `${apiBaseUrl}/diagnoses/${code}`
@@ -11,4 +16,4 @@ const getByCode = async (code: string) => {
   return data;
 };
 
-export default { getByCode };
+export default { getAll, getByCode };

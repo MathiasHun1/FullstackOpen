@@ -1,15 +1,19 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
-import { Patient } from '../../types';
+import { Diagnosis, Patient } from '../../types';
 import patientService from '../../services/patients';
-import EntriesList from '../PatientListPage/EntriesList';
+import EntriesList from './EntriesList';
 
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import TransgenderIcon from '@mui/icons-material/Transgender';
 
-const PatientPage = () => {
+interface Props {
+  diagnoses: Diagnosis[];
+}
+
+const PatientPage = ({ diagnoses }: Props) => {
   const [patient, setPatient] = useState<Patient | null>(null);
   const { userId } = useParams();
 
@@ -42,7 +46,7 @@ const PatientPage = () => {
       <p>ssh: {patient.ssn}</p>
       <p>occupation: {patient.occupation}</p>
 
-      <EntriesList entries={patient.entries} />
+      <EntriesList entries={patient.entries} diagnoses={diagnoses} />
     </div>
   ) : (
     <div>
