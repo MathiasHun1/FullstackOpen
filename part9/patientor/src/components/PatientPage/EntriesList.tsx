@@ -1,8 +1,12 @@
-import { BaseEntry, Diagnosis } from '../../types';
-import DiagnosisElement from './DiagnosisElement';
+import { assertNever } from '../../helpers';
+import { Entry, Diagnosis } from '../../types';
+
+import HealtCheckEntry from './HealtCheckEntry';
+import HospitalEntryElement from './HospitalEntry';
+import OccupationalEntry from './OccupationalEntry';
 
 interface Props {
-  entries: BaseEntry[];
+  entries: Entry[];
   diagnoses: Diagnosis[];
 }
 
@@ -10,23 +14,36 @@ const EntriesList = ({ entries, diagnoses }: Props) => {
   return (
     <>
       <h3>Entries</h3>
-      {entries.map((entry) => (
-        <div key={entry.id}>
-          <p style={{ display: 'inline', marginRight: '12px' }}>{entry.date}</p>
-          <p style={{ display: 'inline' }}>{entry.description}</p>
-
-          <ul>
-            {entry.diagnosisCodes &&
-              entry.diagnosisCodes.map((code) => (
-                <DiagnosisElement
-                  key={code}
-                  code={code}
-                  diagnoses={diagnoses}
-                />
-              ))}
-          </ul>
-        </div>
-      ))}
+      {entries.map((entry) => {
+        switch (entry.type) {
+          case 'HealthCheck':
+            return (
+              <HealtCheckEntry
+                key={entry.id}
+                entry={entry}
+                diagnoses={diagnoses}
+              />
+            );
+          case 'Hospital':
+            return (
+              <HospitalEntryElement
+                key={entry.id}
+                entry={entry}
+                diagnoses={diagnoses}
+              />
+            );
+          case 'OccupationalHealthcare':
+            return (
+              <OccupationalEntry
+                key={entry.id}
+                entry={entry}
+                diagnoses={diagnoses}
+              />
+            );
+          default:
+            return assertNever(entry);
+        }
+      })}
     </>
   );
 };
