@@ -1,10 +1,5 @@
 // Omit with unions - workaround solution
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-// type UnionOMit<T, K extends string | number | symbol> = T extends unknown
-//   ? Omit<T, K>
-//   : never;
-
 export enum Gender {
   Female = 'female',
   Male = 'male',
@@ -31,7 +26,7 @@ export type PatientNonSensitive = Omit<Patient, 'ssn' | 'entries'>;
 export type NewPatientEntry = Omit<Patient, 'id'>;
 export type NewPatientSensitive = Omit<NewPatientEntry, 'ssn'>;
 
-interface BaseEntry {
+export interface BaseEntry {
   id: string;
   description: string;
   date: string;
@@ -73,3 +68,12 @@ export type Entry =
   | HealthCheckEntry
   | HospitalEntry
   | OccupationalHealthcareEntry;
+
+//experiments
+type UnionOmit<T, K extends string | number | symbol> = T extends unknown
+  ? Omit<T, K>
+  : never;
+
+export type EntryWithoutId = UnionOmit<Entry, 'id'>;
+
+export type NewHealthCheckEntry = Omit<HealthCheckEntry, 'id'>;

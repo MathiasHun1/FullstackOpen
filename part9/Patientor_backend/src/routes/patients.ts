@@ -1,6 +1,6 @@
 import express, { Response, Request } from 'express';
 import patientService from '../services/patientServices';
-import { bodyParser, errorHandler } from '../utils';
+import { bodyParserForPatient, errorHandler } from '../utils';
 import { PatientNonSensitive, NewPatientEntry } from '../types';
 
 const router = express.Router();
@@ -15,7 +15,7 @@ router.get('/:id', (req, res) => {
 
 router.post(
   '/',
-  bodyParser,
+  bodyParserForPatient,
   (
     req: Request<unknown, unknown, NewPatientEntry>,
     res: Response<PatientNonSensitive>
@@ -26,6 +26,22 @@ router.post(
   }
 );
 
+router.post('/:id/entries', (req: Request, res: Response) => {
+  try {
+    //find the given patient by its ID
+    const patient = patientService.getPatientById(req.params.id);
+
+    //Read the entry from the req body, identify its type, parse the fields. The type dont have ID yet..
+    const addedEntry = patientService.adddEntry(patient, req.body);
+
+    //Send back the response with the correct data
+    res.status(201).send(addedEntry);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+});
 router.use(errorHandler);
 
 export default router;
