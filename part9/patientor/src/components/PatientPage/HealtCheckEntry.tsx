@@ -12,13 +12,13 @@ interface Props {
 const HealtCheckEntry = ({ entry, diagnoses }: Props) => {
   const setIconColor = () => {
     switch (entry.healthCheckRating) {
-      case 0:
+      case '0':
         return 'green';
-      case 1:
+      case '1':
         return 'yellow';
-      case 2:
+      case '2':
         return 'orange';
-      case 3:
+      case '3':
         return 'red';
       default:
         break;

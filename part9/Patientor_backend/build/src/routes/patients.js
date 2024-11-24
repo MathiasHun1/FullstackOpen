@@ -13,9 +13,24 @@ router.get('/', (_req, res) => {
 router.get('/:id', (req, res) => {
     res.send(patientServices_1.default.getPatientById(req.params.id));
 });
-router.post('/', utils_1.bodyParser, (req, res) => {
+router.post('/', utils_1.bodyParserForPatient, (req, res) => {
     const addedEntry = patientServices_1.default.addPatient(req.body);
     res.status(200).json(addedEntry);
+});
+router.post('/:id/entries', (req, res) => {
+    try {
+        //find the given patient by its ID
+        const patient = patientServices_1.default.getPatientById(req.params.id);
+        //Read the entry from the req body, identify its type, parse the fields. The type dont have ID yet..
+        const addedEntry = patientServices_1.default.adddEntry(patient, req.body);
+        //Send back the response with the correct data
+        res.status(201).send(addedEntry);
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            res.status(400).json({ error: error.message });
+        }
+    }
 });
 router.use(utils_1.errorHandler);
 exports.default = router;

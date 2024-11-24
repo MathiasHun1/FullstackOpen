@@ -1,19 +1,24 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
-import { Diagnosis, Patient } from '../../types';
+import { Diagnosis, Patient, EntryWithoutId } from '../../types';
 import patientService from '../../services/patients';
 import EntriesList from './EntriesList';
+import AddEntryModal from '../AddEntryModal/index.tsx';
 
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import TransgenderIcon from '@mui/icons-material/Transgender';
+import { Button } from '@mui/material';
+import axios from 'axios';
 
 interface Props {
   diagnoses: Diagnosis[];
 }
 
 const PatientPage = ({ diagnoses }: Props) => {
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [error, setError] = useState<string>();
   const [patient, setPatient] = useState<Patient | null>(null);
   const { userId } = useParams();
 
@@ -37,8 +42,52 @@ const PatientPage = ({ diagnoses }: Props) => {
     }
   };
 
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
+  const openModal = () => {
+    setModalOpen(true);
+  };
+
+  const submitNewEntry = async (values: EntryWithoutId) => {
+    try {
+      if (patient) {
+        const entry = await patientService.createEntry(patient.id, values);
+        const updatedPatient = {
+          ...patient,
+          entries: patient.entries.concat(entry),
+        };
+        return updatedPatient;
+      }
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        if (e?.response?.data && typeof e?.response?.data === 'string') {
+          const message = e.response.data.replace(
+            'Something went wrong. Error: ',
+            ''
+          );
+          console.error(message);
+          setError(message);
+        } else {
+          setError('Unrecognized axios error');
+          console.log('Error: ', e);
+        }
+      } else {
+        console.error('Unknown error', e);
+        setError('Unknown error');
+      }
+    }
+  };
+
   return patient ? (
     <div>
+      <AddEntryModal
+        modalOpen={modalOpen}
+        onClose={closeModal}
+        onSubmit={submitNewEntry}
+        error={error}
+      />
       <div className="patientName">
         <h2 style={{ display: 'inline' }}>{patient.name}</h2>
         {returnGenderIcon()}
@@ -47,6 +96,9 @@ const PatientPage = ({ diagnoses }: Props) => {
       <p>occupation: {patient.occupation}</p>
 
       <EntriesList entries={patient.entries} diagnoses={diagnoses} />
+      <Button variant="contained" onClick={() => openModal()}>
+        Add New entry
+      </Button>
     </div>
   ) : (
     <div>

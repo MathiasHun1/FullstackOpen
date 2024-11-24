@@ -11,10 +11,10 @@ export enum Gender {
 }
 
 export enum HealthCheckRating {
-  'Healthy' = 0,
-  'Lowrisk' = 1,
-  'HighRisk' = 2,
-  'CriticalRisk' = 3,
+  'Healthy' = '0',
+  'Lowrisk' = '1',
+  'HighRisk' = '2',
+  'CriticalRisk' = '3',
 }
 
 export interface Patient {
@@ -61,5 +61,11 @@ export type Entry =
   | HealthCheckEntry
   | HospitalEntry
   | OccupationalHealthcareEntry;
+
+type UnionOmit<T, K extends string | number | symbol> = T extends unknown
+  ? Omit<T, K>
+  : never;
+
+export type EntryWithoutId = UnionOmit<Entry, 'id'>;
 
 export type PatientFormValues = Omit<Patient, 'id' | 'entries'>;

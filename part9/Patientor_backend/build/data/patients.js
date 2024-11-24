@@ -126,9 +126,12 @@ const isEntryObject = (entry) => {
 };
 const patients = data.map((object) => {
     const newPatientEntry = (0, utils_1.toNewPatientEntry)(object);
-    if (!isEntryObject(object)) {
-        throw new Error('Incorrect entry type');
-    }
+    // PROVISIONALLY check if entry type is valid
+    newPatientEntry.entries.map((entry) => {
+        if (!isEntryObject(entry)) {
+            throw new Error('Incorrect entry type');
+        }
+    });
     const patientToReturn = Object.assign({ id: object.id }, newPatientEntry);
     return patientToReturn;
 });

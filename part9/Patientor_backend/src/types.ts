@@ -35,10 +35,10 @@ export interface BaseEntry {
 }
 
 export enum HealthCheckRating {
-  'Healthy' = 0,
-  'Lowrisk' = 1,
-  'HighRisk' = 2,
-  'CriticalRisk' = 3,
+  'Healthy' = '0',
+  'Lowrisk' = '1',
+  'HighRisk' = '2',
+  'CriticalRisk' = '3',
 }
 
 export interface HealthCheckEntry extends BaseEntry {
@@ -69,7 +69,6 @@ export type Entry =
   | HospitalEntry
   | OccupationalHealthcareEntry;
 
-//experiments
 type UnionOmit<T, K extends string | number | symbol> = T extends unknown
   ? Omit<T, K>
   : never;

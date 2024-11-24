@@ -7,4 +7,11 @@ const diagnoses_1 = __importDefault(require("../../data/diagnoses"));
 const getDiagnosesEntries = () => {
     return diagnoses_1.default;
 };
-exports.default = { getDiagnosesEntries };
+const findByCode = (code) => {
+    const result = diagnoses_1.default.find((d) => d.code === code);
+    if (!result) {
+        throw new Error('no diagnosis found with the given code');
+    }
+    return result;
+};
+exports.default = { getDiagnosesEntries, findByCode };

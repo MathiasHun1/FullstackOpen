@@ -224,18 +224,18 @@ const parseSickLeave = (
   return parsedObject;
 };
 
-const isNumber = (value: unknown): value is number => {
-  return typeof value === 'number' || value instanceof Number;
-};
+// const isNumber = (value: unknown): value is number => {
+//   return typeof value === 'number' || value instanceof Number;
+// };
 
-const isHealthCheckRating = (param: number): param is HealthCheckRating => {
+const isHealthCheckRating = (param: string): param is HealthCheckRating => {
   return Object.values(HealthCheckRating)
-    .map((v) => Number(v))
+    .map((v) => v.toString())
     .includes(param);
 };
 
 const parseHealthCheckRating = (value: unknown): HealthCheckRating => {
-  if (!value || !isNumber(value) || !isHealthCheckRating(value)) {
+  if (!value || !isString(value) || !isHealthCheckRating(value)) {
     throw new Error(`Incorrect Healtcheck-rating: ${value}`);
   }
 
