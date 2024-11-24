@@ -58,7 +58,9 @@ const PatientPage = ({ diagnoses }: Props) => {
           ...patient,
           entries: patient.entries.concat(entry),
         };
-        return updatedPatient;
+
+        closeModal();
+        setPatient(updatedPatient);
       }
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {

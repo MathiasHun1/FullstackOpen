@@ -1,5 +1,6 @@
 import { assertNever } from '../../helpers';
 import { Entry, Diagnosis } from '../../types';
+import { sortByDate } from '../../helpers';
 
 import HealtCheckEntry from './HealtCheckEntry';
 import HospitalEntryElement from './HospitalEntry';
@@ -14,7 +15,7 @@ const EntriesList = ({ entries, diagnoses }: Props) => {
   return (
     <>
       <h3>Entries</h3>
-      {entries.map((entry) => {
+      {sortByDate(entries).map((entry) => {
         switch (entry.type) {
           case 'HealthCheck':
             return (

@@ -1,46 +1,44 @@
 import { SyntheticEvent, useState } from 'react';
 
-import {
-  TextField,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  Grid,
-  Button,
-} from '@mui/material';
+import { SelectChangeEvent, Grid, Button, TextField } from '@mui/material';
 
-import { EntryWithoutId, HealthCheckRating } from '../../types';
+import {
+  EntryWithoutId,
+  HealthCheckRating,
+  EntryType,
+  HospitalEntry,
+  OccupationalHealthcareEntry,
+} from '../../types';
+import SelectEntry from './SelectEntry';
+import HealthCheckForm from './HealthCheckForm';
+import OccupationalForm from './OccupationalForm';
+import HospitalForm from './HospitalForm';
+import * as helpers from '../../helpers';
 
 interface Props {
   onSubmit: (values: EntryWithoutId) => void;
-  onCancel: () => void;
+  onClose: () => void;
 }
 
-interface HealthCheckRatingOption {
-  value: HealthCheckRating;
-  label: string;
-}
-
-const healthCheckoptions: HealthCheckRatingOption[] = Object.values(
-  HealthCheckRating
-).map((h) => {
-  const obj: HealthCheckRatingOption = {
-    value: h,
-    label: h.toString(),
-  };
-
-  return obj;
-});
-
-const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
+const AddEntryForm = ({ onClose, onSubmit }: Props) => {
+  const [entryType, setEntryType] = useState<EntryType>('Hospital');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
   const [specialist, setSpectialist] = useState('');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [healthCheckRating, setHealthCheckRating] = useState(
     HealthCheckRating.Healthy
   );
+  const [employerName, setEmployerName] = useState('');
+  const [discharge, setDischarge] = useState<HospitalEntry['discharge']>({
+    date: helpers.getTodaysDateString(),
+    criteria: '',
+  });
+  const [sickLeave, setSickLeave] = useState<
+    OccupationalHealthcareEntry['sickLeave']
+  >({
+    startDate: '',
+    endDate: '',
+  });
 
   const onHealthCheckRatingChange = (event: SelectChangeEvent<string>) => {
     if (typeof event.target.value == 'string') {
@@ -58,52 +56,105 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
 
   const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
-    onSubmit({
-      description,
-      date,
-      specialist,
-      healthCheckRating,
-      type: 'HealthCheck',
-    });
+    switch (entryType) {
+      case 'HealthCheck':
+        onSubmit({
+          description,
+          date,
+          specialist,
+          healthCheckRating,
+          type: entryType,
+        });
+        break;
+      case 'OccupationalHealthcare': {
+        onSubmit({
+          description,
+          date,
+          specialist,
+          employerName,
+          sickLeave: helpers.isObjectEmpty(sickLeave) ? undefined : sickLeave,
+          type: entryType,
+        });
+        break;
+      }
+      case 'Hospital': {
+        onSubmit({
+          description,
+          date,
+          specialist,
+          type: entryType,
+          discharge,
+        });
+        break;
+      }
+      default:
+        break;
+    }
+  };
+
+  const renderSelectedEntryForm = () => {
+    switch (entryType) {
+      case 'HealthCheck': {
+        return (
+          <HealthCheckForm
+            healthCheckRating={healthCheckRating}
+            onHealthCheckRatingChange={onHealthCheckRatingChange}
+          />
+        );
+      }
+      case 'OccupationalHealthcare': {
+        return (
+          <OccupationalForm
+            employerName={employerName}
+            setEmployerName={setEmployerName}
+            sickLeave={sickLeave}
+            setSickLeave={setSickLeave}
+          />
+        );
+      }
+      case 'Hospital': {
+        return (
+          <HospitalForm discharge={discharge} setDischarge={setDischarge} />
+        );
+      }
+
+      default: {
+        return null;
+      }
+    }
   };
 
   return (
     <div>
       <form onSubmit={addEntry}>
-        <TextField
-          label="Description"
-          fullWidth
-          value={description}
-          onChange={({ target }) => setDescription(target.value)}
-        />
+        <SelectEntry entryType={entryType} setEntryType={setEntryType} />
 
-        <TextField
-          label="Date"
-          fullWidth
-          value={date}
-          onChange={({ target }) => setDate(target.value)}
-        />
+        {entryType && (
+          <>
+            <TextField
+              label="Description"
+              fullWidth
+              value={description}
+              onChange={({ target }) => setDescription(target.value)}
+            />
 
-        <TextField
-          label="Specialist"
-          fullWidth
-          value={specialist}
-          onChange={({ target }) => setSpectialist(target.value)}
-        />
+            <TextField
+              label="Date"
+              fullWidth
+              value={date}
+              onChange={({ target }) => setDate(target.value)}
+            />
 
-        <InputLabel>Health-rating</InputLabel>
-        <Select
-          label="Health-rating"
-          fullWidth
-          value={healthCheckRating}
-          onChange={onHealthCheckRatingChange}
-        >
-          {healthCheckoptions.map((option) => (
-            <MenuItem key={option.label} value={option.value}>
-              {option.value}
-            </MenuItem>
-          ))}
-        </Select>
+            <TextField
+              label="Specialist"
+              fullWidth
+              value={specialist}
+              onChange={({ target }) => setSpectialist(target.value)}
+            />
+          </>
+        )}
+
+        {renderSelectedEntryForm()}
 
         <Grid>
           <Grid item>
@@ -112,7 +163,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
               variant="contained"
               style={{ float: 'left' }}
               type="button"
-              onClick={onCancel}
+              onClick={onClose}
             >
               Cancel
             </Button>
