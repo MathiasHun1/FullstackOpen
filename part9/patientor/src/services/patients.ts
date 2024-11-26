@@ -27,7 +27,6 @@ const createEntry = async (paientId: string, values: EntryWithoutId) => {
     `${apiBaseUrl}/patients/${paientId}/entries`,
     values
   );
-  console.log(data);
 
   return data;
 };

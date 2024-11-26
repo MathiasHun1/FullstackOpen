@@ -42,9 +42,61 @@ export const toNewPatientEntry = (object: unknown): NewPatientEntry => {
   throw new Error('Incorrect data: some fields are missing');
 };
 
+export const toNewEntry = (object: unknown): EntryWithoutId => {
+  if (!object || typeof object !== 'object') {
+    throw new Error('Invalid or missong entry object');
+  }
+
+  if (!isObjectWithCorrectType(object)) {
+    throw new Error('Invalid or missing entry-type');
+  }
+
+  const base = parseBaseEntry(object);
+
+  if (object.type === 'HealthCheck') {
+    if (!('healthCheckRating' in object)) {
+      throw new Error('missing healthCheckRating field');
+    }
+    const entry: Omit<HealthCheckEntry, 'id'> = {
+      type: object.type,
+      healthCheckRating: parseHealthCheckRating(object.healthCheckRating),
+      ...base,
+    };
+    return entry;
+  } else if (object.type === 'Hospital') {
+    if (!('discharge' in object)) {
+      throw new Error('missing discharge field');
+    }
+    const entry: Omit<HospitalEntry, 'id'> = {
+      type: object.type,
+      discharge: parseDiascharge(object.discharge),
+      ...base,
+    };
+    return entry;
+  } else if (object.type === 'OccupationalHealthcare') {
+    if (!('employerName' in object)) {
+      throw new Error('missing employerName field');
+    }
+
+    const entry: Omit<OccupationalHealthcareEntry, 'id'> = {
+      type: object.type,
+      employerName: parseStringProperty(object.employerName, 'employerName'),
+      ...base,
+    };
+    if (!('sickLeave' in object)) {
+      return entry;
+    } else {
+      entry.sickLeave = parseSickLeave(object.sickLeave);
+      return entry;
+    }
+  }
+
+  throw new Error('Unknown error');
+};
+
 const parseStringProperty = (text: unknown, fieldName: string) => {
   if (!text || !isString(text)) {
-    throw new Error(`Incorrect or missing ${fieldName}`);
+    throw new Error(`Incorrect or missing ${fieldName} field!`);
   }
 
   return text;
@@ -98,90 +150,47 @@ export const errorHandler = (
   next: NextFunction
 ) => {
   if (error instanceof z.ZodError) {
-    res.status(400).send({ error: error.issues });
+    res.status(400).json({ issues: error.issues });
   } else {
     next(error);
   }
 };
 
-// TASK Work
+const parseBaseEntry = (object: object): Omit<BaseEntry, 'id'> => {
+  if (!('description' in object)) {
+    throw new Error('Missing description');
+  }
 
-/* function for parsing a new entry to one of the possible types*/
-export const toNewEntry = (object: unknown): EntryWithoutId => {
-  if (!isObjectWithCorrectType(object) || !isBaseEntry(object)) {
-    console.log('Booooooo');
-    throw new Error('Ivalid/missing base entry porperties or invalid type');
+  if (!('date' in object)) {
+    throw new Error('Missing date');
+  }
+
+  if (!('specialist' in object)) {
+    throw new Error('Missing specialist');
   }
 
   const base: Omit<BaseEntry, 'id'> = {
-    description: z.string().parse(object.description),
-    date: z.string().parse(object.date),
-    specialist: z.string().parse(object.specialist),
-    diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes),
+    description: parseStringProperty(object.description, 'description'),
+    date: parseDate(object.date),
+    specialist: parseStringProperty(object.specialist, 'specialist'),
   };
 
-  if (object.type === 'HealthCheck' && 'healthCheckRating' in object) {
-    const entry: Omit<HealthCheckEntry, 'id'> = {
-      type: object.type,
-      healthCheckRating: parseHealthCheckRating(object.healthCheckRating),
-      ...base,
-    };
-    return entry;
-  } else if (object.type === 'Hospital' && 'discharge' in object) {
-    const entry: Omit<HospitalEntry, 'id'> = {
-      type: object.type,
-      discharge: parseDiascharge(object.discharge),
-      ...base,
-    };
-    return entry;
-  } else if (
-    object.type === 'OccupationalHealthcare' &&
-    'employerName' in object
-  ) {
-    const entry: Omit<OccupationalHealthcareEntry, 'id'> = {
-      type: object.type,
-      employerName: z.string().parse(object.employerName),
-      ...base,
-    };
-    if (!('sickLeave' in object)) {
-      return entry;
-    } else {
-      entry.sickLeave = parseSickLeave(object.sickLeave);
-      return entry;
-    }
+  if ('diagnosisCodes' in object) {
+    base.diagnosisCodes = parseDiagnosisCodes(object.diagnosisCodes);
   }
 
-  throw new Error('Missing or invalid data');
+  return base;
 };
 
 const isObjectWithCorrectType = (
-  object: unknown
+  object: object
 ): object is {
   type: 'HealthCheck' | 'OccupationalHealthcare' | 'Hospital';
 } => {
   return (
-    object !== null &&
-    typeof object === 'object' &&
     'type' in object &&
     isString(object.type) &&
     ['HealthCheck', 'OccupationalHealthcare', 'Hospital'].includes(object.type)
-  );
-};
-
-const isBaseEntry = (object: unknown): object is Omit<BaseEntry, 'id'> => {
-  if (!object || typeof object !== 'object') {
-    throw new Error('Invalid or missing entry object');
-  }
-
-  return (
-    ('description' in object &&
-      'date' in object &&
-      'specialist' in object &&
-      !('diagnosisCodes' in object)) ||
-    ('description' in object &&
-      'date' in object &&
-      'specialist' in object &&
-      'diagnosisCodes' in object)
   );
 };
 
@@ -193,12 +202,12 @@ const parseDiascharge = (
   }
 
   if (!('date' in object && 'criteria' in object)) {
-    throw new Error('Invalid or missing properties in hospitalEntry/discharge');
+    throw new Error('Missing properties in hospitalEntry/discharge');
   }
 
   const parsedObject = {
-    date: z.string().parse(object.date),
-    criteria: z.string().parse(object.criteria),
+    date: parseDate(object.date),
+    criteria: parseStringProperty(object.criteria, 'discharge/criteria'),
   };
   return parsedObject;
 };
@@ -211,22 +220,16 @@ const parseSickLeave = (
   }
 
   if (!('startDate' in object && 'endDate' in object)) {
-    throw new Error(
-      'Invalid or missing sickLeave property in occupation entry'
-    );
+    throw new Error('Missing property in occupation entry/sickLeave');
   }
 
   const parsedObject = {
-    startDate: z.string().parse(object.startDate),
-    endDate: z.string().parse(object.endDate),
+    startDate: parseDate(object.startDate),
+    endDate: parseDate(object.endDate),
   };
 
   return parsedObject;
 };
-
-// const isNumber = (value: unknown): value is number => {
-//   return typeof value === 'number' || value instanceof Number;
-// };
 
 const isHealthCheckRating = (param: string): param is HealthCheckRating => {
   return Object.values(HealthCheckRating)
@@ -249,4 +252,30 @@ const parseDiagnosisCodes = (object: unknown): Array<Diagnosis['code']> => {
   }
 
   return object.diagnosisCodes as Array<Diagnosis['code']>;
+};
+
+const isCorrectDateFormat = (value: string): boolean => {
+  // const regex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+  const regex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$/;
+
+  if (!regex.test(value)) {
+    return false;
+  }
+
+  const date = new Date(value);
+  const [year, month, day] = value.split('-').map((v) => Number(v));
+
+  return (
+    date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
+  );
+};
+
+const parseDate = (value: unknown) => {
+  if (!value || !isString(value) || !isCorrectDateFormat(value)) {
+    throw new Error('Missing date or Incorrect date-format');
+  }
+
+  return value;
 };

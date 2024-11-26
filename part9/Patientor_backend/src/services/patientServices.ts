@@ -51,22 +51,15 @@ const addPatient = (entry: NewPatientEntry): PatientNonSensitive => {
 };
 
 const adddEntry = (patient: Patient, entry: unknown): Entry => {
-  try {
-    const parsedObject: EntryWithoutId = toNewEntry(entry);
+  const parsedObject: EntryWithoutId = toNewEntry(entry);
 
-    const newEntry: Entry = {
-      ...parsedObject,
-      id: uuidv4(),
-    };
+  const newEntry: Entry = {
+    ...parsedObject,
+    id: uuidv4(),
+  };
 
-    patient.entries.push(newEntry);
-    return newEntry;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(error.message);
-    }
-    throw new Error('unknown error');
-  }
+  patient.entries.push(newEntry);
+  return newEntry;
 };
 
 export default {

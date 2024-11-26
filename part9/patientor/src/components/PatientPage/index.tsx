@@ -18,7 +18,7 @@ interface Props {
 
 const PatientPage = ({ diagnoses }: Props) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<string>('');
   const [patient, setPatient] = useState<Patient | null>(null);
   const { userId } = useParams();
 
@@ -43,6 +43,9 @@ const PatientPage = ({ diagnoses }: Props) => {
   };
 
   const closeModal = () => {
+    if (error) {
+      setError('');
+    }
     setModalOpen(false);
   };
 
@@ -64,13 +67,12 @@ const PatientPage = ({ diagnoses }: Props) => {
       }
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
-        if (e?.response?.data && typeof e?.response?.data === 'string') {
-          const message = e.response.data.replace(
-            'Something went wrong. Error: ',
-            ''
-          );
-          console.error(message);
-          setError(message);
+        console.log('Error from axios');
+        console.log(e);
+
+        if (e.response?.data && typeof e.response?.data?.error === 'string') {
+          const errorMessage = e.response.data.error;
+          setError(errorMessage);
         } else {
           setError('Unrecognized axios error');
           console.log('Error: ', e);
