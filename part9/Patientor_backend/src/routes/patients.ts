@@ -29,7 +29,7 @@ router.post(
 router.post('/:id/entries', (req: Request, res: Response) => {
   try {
     const patient = patientService.getPatientById(req.params.id);
-    const addedEntry = patientService.adddEntry(patient, req.body);
+    const addedEntry = patientService.addEntry(patient, req.body);
     res.status(201).send(addedEntry);
   } catch (error: unknown) {
     if (error instanceof Error) {

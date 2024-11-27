@@ -12,11 +12,14 @@ export const getTodaysDateString = (): string => {
   return format(today, 'yyyy-MM-dd');
 };
 
-export const isObjectEmpty = (object: object | undefined): boolean => {
+export const sickLeaveNotFilled = (object: object | undefined): boolean => {
   if (!object) return true;
 
   const values = Object.values(object).map((v) => v.toString());
-  return values.every((v) => v === '');
+  if (values.find((v) => v === 'Invalid Date')) {
+    return true;
+  }
+  return false;
 };
 
 export const sortByDate = (entryArray: Entry[]): Entry[] => {

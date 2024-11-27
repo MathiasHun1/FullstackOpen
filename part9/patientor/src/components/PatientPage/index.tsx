@@ -91,6 +91,7 @@ const PatientPage = ({ diagnoses }: Props) => {
         onClose={closeModal}
         onSubmit={submitNewEntry}
         error={error}
+        diagnoses={diagnoses}
       />
       <div className="patientName">
         <h2 style={{ display: 'inline' }}>{patient.name}</h2>

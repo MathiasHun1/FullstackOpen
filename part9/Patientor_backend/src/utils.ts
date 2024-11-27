@@ -62,6 +62,10 @@ export const toNewEntry = (object: unknown): EntryWithoutId => {
       healthCheckRating: parseHealthCheckRating(object.healthCheckRating),
       ...base,
     };
+
+    if ('diagnosisCodes' in object) {
+      entry.diagnosisCodes = object.diagnosisCodes as string[];
+    }
     return entry;
   } else if (object.type === 'Hospital') {
     if (!('discharge' in object)) {
@@ -72,6 +76,10 @@ export const toNewEntry = (object: unknown): EntryWithoutId => {
       discharge: parseDiascharge(object.discharge),
       ...base,
     };
+
+    if ('diagnosisCodes' in object) {
+      entry.diagnosisCodes = object.diagnosisCodes as string[];
+    }
     return entry;
   } else if (object.type === 'OccupationalHealthcare') {
     if (!('employerName' in object)) {
@@ -83,6 +91,10 @@ export const toNewEntry = (object: unknown): EntryWithoutId => {
       employerName: parseStringProperty(object.employerName, 'employerName'),
       ...base,
     };
+
+    if ('diagnosisCodes' in object) {
+      entry.diagnosisCodes = object.diagnosisCodes as string[];
+    }
     if (!('sickLeave' in object)) {
       return entry;
     } else {

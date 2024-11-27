@@ -1,11 +1,17 @@
 import { TextField, InputLabel } from '@mui/material';
 import { OccupationalHealthcareEntry } from '../../types';
-import { useEffect } from 'react';
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
+import { Dayjs } from 'dayjs';
 
 interface Props {
   employerName: string;
-  setEmployerName: React.Dispatch<React.SetStateAction<string>>;
   sickLeave: OccupationalHealthcareEntry['sickLeave'];
+  sickLeaveStart: Dayjs | null;
+  sickLeaveEnd: Dayjs | null;
+  setSickLeaveStart: React.Dispatch<React.SetStateAction<dayjs.Dayjs | null>>;
+  setSickLeaveEnd: React.Dispatch<React.SetStateAction<dayjs.Dayjs | null>>;
+  setEmployerName: React.Dispatch<React.SetStateAction<string>>;
   setSickLeave: React.Dispatch<
     React.SetStateAction<
       | {
@@ -18,48 +24,13 @@ interface Props {
 }
 
 const OccupationalForm = ({
-  sickLeave,
   employerName,
+  sickLeaveStart,
+  sickLeaveEnd,
+  setSickLeaveStart,
+  setSickLeaveEnd,
   setEmployerName,
-  setSickLeave,
 }: Props) => {
-  useEffect(() => {
-    initSickLeave();
-  }, []);
-
-  const initSickLeave = () => {
-    setSickLeave({
-      startDate: '',
-      endDate: '',
-    });
-  };
-
-  const startDateChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    if (!sickLeave) {
-      initSickLeave();
-    }
-
-    setSickLeave({
-      startDate: e.target.value,
-      endDate: sickLeave!.endDate,
-    });
-  };
-
-  const endDateChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    if (!sickLeave) {
-      initSickLeave();
-    }
-
-    setSickLeave({
-      startDate: sickLeave!.startDate,
-      endDate: e.target.value,
-    });
-  };
-
   return (
     <>
       <TextField
@@ -72,19 +43,22 @@ const OccupationalForm = ({
       <InputLabel sx={{ marginTop: '8px', marginBottom: '8px' }}>
         Sick-allownace ?
       </InputLabel>
-      <TextField
-        label="Start date"
-        fullWidth
-        value={sickLeave?.startDate}
-        onChange={startDateChange}
-      />
 
-      <TextField
-        label="End date"
-        fullWidth
-        value={sickLeave?.endDate}
-        onChange={endDateChange}
-      />
+      <div className="sick-leave-cont">
+        <DatePicker
+          label="Start-date"
+          format="YYYY.MM.DD"
+          value={sickLeaveStart}
+          onChange={(newValue) => setSickLeaveStart(newValue)}
+        />
+
+        <DatePicker
+          label="End-date"
+          format="YYYY.MM.DD"
+          value={sickLeaveEnd}
+          onChange={(newValue) => setSickLeaveEnd(newValue)}
+        />
+      </div>
     </>
   );
 };

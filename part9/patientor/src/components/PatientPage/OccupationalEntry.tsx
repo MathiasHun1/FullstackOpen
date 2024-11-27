@@ -1,5 +1,6 @@
 import { OccupationalHealthcareEntry, Diagnosis } from '../../types';
 import DiagnosisElement from './DiagnosisElement';
+import dayjs from 'dayjs';
 
 import WorkIcon from '@mui/icons-material/Work';
 
@@ -24,10 +25,12 @@ const OccupationalEntry = ({ entry, diagnoses }: Props) => {
 
       <p>Employer: {entry.employerName}</p>
       {entry.sickLeave && (
-        <div style={{ paddingLeft: '1rem' }}>
+        <div>
           <p>
-            sick-allowance: {entry.sickLeave.startDate} -{' '}
-            {entry.sickLeave.endDate}
+            {`sick-allowance: ${dayjs(entry.sickLeave.startDate).format(
+              'YYYY.MM.DD'
+            )} -
+            ${dayjs(entry.sickLeave.endDate).format('YYYY.MM.DD')}`}
           </p>
         </div>
       )}

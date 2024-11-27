@@ -50,7 +50,7 @@ const addPatient = (entry: NewPatientEntry): PatientNonSensitive => {
   return patientNonSensitive;
 };
 
-const adddEntry = (patient: Patient, entry: unknown): Entry => {
+const addEntry = (patient: Patient, entry: unknown): Entry => {
   const parsedObject: EntryWithoutId = toNewEntry(entry);
 
   const newEntry: Entry = {
@@ -66,5 +66,5 @@ export default {
   getNonSensitivePatientsData,
   addPatient,
   getPatientById,
-  adddEntry,
+  addEntry,
 };

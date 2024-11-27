@@ -2,9 +2,8 @@ import { Select, MenuItem, InputLabel } from '@mui/material';
 import { EntryType } from '../../types';
 
 interface Props {
-  setEntryType: React.Dispatch<React.SetStateAction<EntryType>>;
-  entryType?: string;
-  // entryType?: 'HealthCheck' | 'OccupationalHealthcare' | 'Hospital';
+  setEntryType: React.Dispatch<React.SetStateAction<EntryType | ''>>;
+  entryType: string;
 }
 
 const SelectEntry = ({ entryType, setEntryType }: Props) => {
